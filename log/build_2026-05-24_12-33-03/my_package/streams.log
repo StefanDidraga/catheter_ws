@@ -1,0 +1,38 @@
+[0.998s] Invoking command in '/home/paulstefandidraga/catheter_ws/src/my_package': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/paulstefandidraga/catheter_ws/build/my_package/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/paulstefandidraga/catheter_ws/install/my_package/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/my_package build --build-base /home/paulstefandidraga/catheter_ws/build/my_package/build install --record /home/paulstefandidraga/catheter_ws/build/my_package/install.log --single-version-externally-managed install_data
+[1.249s] running egg_info
+[1.249s] creating ../../build/my_package/my_package.egg-info
+[1.269s] writing ../../build/my_package/my_package.egg-info/PKG-INFO
+[1.270s] writing dependency_links to ../../build/my_package/my_package.egg-info/dependency_links.txt
+[1.270s] writing entry points to ../../build/my_package/my_package.egg-info/entry_points.txt
+[1.270s] writing requirements to ../../build/my_package/my_package.egg-info/requires.txt
+[1.270s] writing top-level names to ../../build/my_package/my_package.egg-info/top_level.txt
+[1.270s] writing manifest file '../../build/my_package/my_package.egg-info/SOURCES.txt'
+[1.307s] reading manifest file '../../build/my_package/my_package.egg-info/SOURCES.txt'
+[1.307s] adding license file 'LICENSE'
+[1.307s] writing manifest file '../../build/my_package/my_package.egg-info/SOURCES.txt'
+[1.307s] running build
+[1.308s] running build_py
+[1.308s] creating /home/paulstefandidraga/catheter_ws/build/my_package/build
+[1.308s] creating /home/paulstefandidraga/catheter_ws/build/my_package/build/lib
+[1.308s] creating /home/paulstefandidraga/catheter_ws/build/my_package/build/lib/my_package
+[1.308s] copying my_package/my_node.py -> /home/paulstefandidraga/catheter_ws/build/my_package/build/lib/my_package
+[1.308s] copying my_package/__init__.py -> /home/paulstefandidraga/catheter_ws/build/my_package/build/lib/my_package
+[1.308s] running install
+[1.315s] running install_lib
+[1.338s] creating /home/paulstefandidraga/catheter_ws/install/my_package/lib/python3.12/site-packages/my_package
+[1.338s] copying /home/paulstefandidraga/catheter_ws/build/my_package/build/lib/my_package/my_node.py -> /home/paulstefandidraga/catheter_ws/install/my_package/lib/python3.12/site-packages/my_package
+[1.338s] copying /home/paulstefandidraga/catheter_ws/build/my_package/build/lib/my_package/__init__.py -> /home/paulstefandidraga/catheter_ws/install/my_package/lib/python3.12/site-packages/my_package
+[1.339s] byte-compiling /home/paulstefandidraga/catheter_ws/install/my_package/lib/python3.12/site-packages/my_package/my_node.py to my_node.cpython-312.pyc
+[1.339s] byte-compiling /home/paulstefandidraga/catheter_ws/install/my_package/lib/python3.12/site-packages/my_package/__init__.py to __init__.cpython-312.pyc
+[1.339s] running install_data
+[1.339s] creating /home/paulstefandidraga/catheter_ws/install/my_package/share/ament_index
+[1.339s] creating /home/paulstefandidraga/catheter_ws/install/my_package/share/ament_index/resource_index
+[1.339s] creating /home/paulstefandidraga/catheter_ws/install/my_package/share/ament_index/resource_index/packages
+[1.340s] copying resource/my_package -> /home/paulstefandidraga/catheter_ws/install/my_package/share/ament_index/resource_index/packages
+[1.340s] copying package.xml -> /home/paulstefandidraga/catheter_ws/install/my_package/share/my_package
+[1.340s] running install_egg_info
+[1.361s] Copying ../../build/my_package/my_package.egg-info to /home/paulstefandidraga/catheter_ws/install/my_package/lib/python3.12/site-packages/my_package-0.0.0-py3.12.egg-info
+[1.362s] running install_scripts
+[1.482s] Installing my_node script to /home/paulstefandidraga/catheter_ws/install/my_package/lib/my_package
+[1.482s] writing list of installed files to '/home/paulstefandidraga/catheter_ws/build/my_package/install.log'
+[1.505s] Invoked command in '/home/paulstefandidraga/catheter_ws/src/my_package' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/paulstefandidraga/catheter_ws/build/my_package/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/paulstefandidraga/catheter_ws/install/my_package/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/my_package build --build-base /home/paulstefandidraga/catheter_ws/build/my_package/build install --record /home/paulstefandidraga/catheter_ws/build/my_package/install.log --single-version-externally-managed install_data
