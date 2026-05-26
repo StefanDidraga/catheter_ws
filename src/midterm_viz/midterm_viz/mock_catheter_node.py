@@ -40,25 +40,25 @@ class MockCatheterNode(Node):
             if len(self.active_points) > window_size:
                 self.active_points.pop(0)
 
-            # 6. Create the single Marker message
+            # 6. Create TUNNEL
             marker = Marker()
             marker.header.frame_id = "map"
             marker.header.stamp = self.get_clock().now().to_msg()
-            marker.ns = "spinning_segment"
+            marker.ns = "catheter_viz"
             
             # We give it ID = 0 every single time. 
             # This tells RViz: "Erase the last list I gave you and draw this new one instead!"
             marker.id = 0 
             
-            marker.type = Marker.POINTS
+            marker.type = Marker.SPHERE_LIST
             marker.action = Marker.ADD
 
             # Size and Color
-            marker.scale.x = 0.05
-            marker.scale.y = 0.05
-            marker.scale.z = 0.05
+            marker.scale.x = 0.50
+            marker.scale.y = 0.50
+            marker.scale.z = 0.50
             marker.color.r = 1.0
-            marker.color.a = 1.0 
+            marker.color.a = 0.5 
 
             # 7. Attach our carefully sized list of points to the marker
             marker.points = self.active_points
@@ -66,9 +66,34 @@ class MockCatheterNode(Node):
             # 8. Publish the moving segment!
             self.publisher_.publish(marker)
             
-            # Move to the next row in the CSV for the next timer tick
+            #self.get_logger().info(f'Published point: ({x:.2f}, {y:.2f}) with {len(self.active_points)} active points.')
+
+            # Create LINE 
+            line = Marker()
+            line.header.frame_id = "map"
+            line.header.stamp = self.get_clock().now().to_msg()
+            line.ns = "catheter_visualization"
+            
+            line.id = 1  # <--- ID 1 (Crucial! Do not overwrite the tunnel)
+            line.type = Marker.LINE_STRIP
+            line.action = Marker.ADD
+
+            # Thin and Solid (The Wire)
+            line.scale.x = 0.1 # Only 1cm thick
+            # (Remember, y and z scale don't matter for LINE_STRIP)
+            
+            # Let's make the centerline bright Blue so it pops against the red tunnel
+            line.color.r = 0.0
+            line.color.g = 0.0
+            line.color.b = 1.0
+            line.color.a = 1.0 
+
+            # Re-use the exact same list of points!
+            line.points = self.active_points
+
+            # Publish the line immediately after!
+            self.publisher_.publish(line)
             self.index += 1
-            self.get_logger().info(f'Published point: ({x:.2f}, {y:.2f}) with {len(self.active_points)} active points.')
         else:
             self.get_logger().info('Data Looped.')
             self.index = 0
