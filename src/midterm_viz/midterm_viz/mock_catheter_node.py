@@ -1,4 +1,12 @@
+'''
+This node recieves data from the ESP32, computes the catheter tip position, 
+and visualizes it in RViz. 
+It also publishes a joystick command to the /Joystick_data topic.
+'''
+
+
 import rclpy
+import numpy as np
 from rclpy.node import Node
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Point
@@ -23,35 +31,72 @@ class MockCatheterNode(Node):
             10
         )
         
+
+        self.position = np.array([[0.0], [0.0], [0.0]])  # Initial position of the catheter tip
+        self.R_global = np.eye(3)
+        self.prev_pos = 0.0
+
+        self.radius = 0.05 # encoder wheel radius in meters
+
         self.active_points = []
         
         # 3. Since data is now infinite, we set a hard limit on the tail length.
         # The ESP32 publishes every 100ms (10Hz). 60 points = 6 seconds of tail.
-        self.window_size = 60 
+        self.window_size = 60
 
     def listener_callback(self, msg):
-        # Safety check: ensure the array has at least an X and Y
-        if len(msg.data) >= 2:
-            x = float(msg.data[0])
-            y = float(msg.data[1])
+        # Get esp32
+        if len(msg.data) >= 7:
+            encoder_x = float(msg.data[0])
+            omega_x = float(msg.data[1])
+            omega_y = float(msg.data[2])
+            omega_z = float(msg.data[3])
+            tof1 = float(msg.data[4])
+            tof2 = float(msg.data[5])
+            tof3 = float(msg.data[6])
         else:
             self.get_logger().warn('Received malformed data array from ESP32')
             return
+        #ADD FILTERING HERE 
 
-        # 4. Create the new point
+        # Compute new position based on received data
+
+        x_dist = encoder_x * self.radius - self.prev_pos
+        self.prev_pos = encoder_x * self.radius
+
+        V_local = np.array([[x_dist], [0.0], [0.0]])
+
+        theta_x = omega_x * 0.1
+        theta_y = omega_y * 0.1
+        theta_z = omega_z * 0.1 
+        R_x = np.array([[1, 0, 0],
+                        [0, np.cos(theta_x), -np.sin(theta_x)],
+                        [0, np.sin(theta_x), np.cos(theta_x)]])
+        R_y = np.array([[np.cos(theta_y), 0, np.sin(theta_y)],
+                        [0, 1, 0],
+                        [-np.sin(theta_y), 0, np.cos(theta_y)]])
+        R_z = np.array([[np.cos(theta_z), -np.sin(theta_z), 0],
+                        [np.sin(theta_z), np.cos(theta_z), 0],
+                        [0, 0, 1]])
+        R_local = R_z @ R_y @ R_x
+        self.R_global = self.R_global @ R_local
+        self.position = self.R_global @ V_local + self.position
+
+
+        
         new_point = Point()
-        new_point.x = x
-        new_point.y = y
-        new_point.z = 0.0
+        new_point.x = self.position[0, 0]
+        new_point.y = self.position[1, 0]
+        new_point.z = self.position[2, 0]
 
-        # 5. Add the new point to the end of our active list
+        # Add the new point to the end of our active list
         self.active_points.append(new_point)
 
-        # 6. If our list is longer than the window size, delete the oldest point (index 0)
+        # If our list is longer than the window size, delete the oldest point (index 0)
         if len(self.active_points) > self.window_size:
             self.active_points.pop(0)
 
-        # 7. Create TUNNEL Marker
+        # Create TUNNEL Marker
         marker = Marker()
         marker.header.frame_id = "map"
         marker.header.stamp = self.get_clock().now().to_msg()
@@ -72,7 +117,7 @@ class MockCatheterNode(Node):
         # Publish the moving segment!
         self.publisher_.publish(marker)
 
-        # 8. Create LINE Marker
+        # Create LINE Marker
         line = Marker()
         line.header.frame_id = "map"
         line.header.stamp = self.get_clock().now().to_msg()
