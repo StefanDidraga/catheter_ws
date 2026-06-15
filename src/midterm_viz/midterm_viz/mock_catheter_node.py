@@ -34,10 +34,10 @@ class MockCatheterNode(Node):
 
         self.position = np.array([[0.0], [0.0], [0.0]])  # Initial position of the catheter tip
         self.R_global = np.eye(3)
-        self.prev_pos = 0.0
+        self.prev_encoder_x = None
 
         self.radius = 0.05 # encoder wheel radius in meters
-
+        self.encoder_resolution = 4096 # encoder ticks per revolution
         self.active_points = []
         
         # 3. Since data is now infinite, we set a hard limit on the tail length.
@@ -59,10 +59,43 @@ class MockCatheterNode(Node):
             return
         #ADD FILTERING HERE 
 
-        # Compute new position based on received data
+        tof1 -= 16
+        tof2 -= 16
+        tof3 -= 16
 
-        x_dist = encoder_x * self.radius - self.prev_pos
-        self.prev_pos = encoder_x * self.radius
+        if(omega_x < 0.01):
+            omega_x = 0.0
+        if(omega_y < 0.01):
+            omega_y = 0.0
+        if(omega_z < 0.01):
+            omega_z = 0.0
+
+
+        # Compute new position based on received data
+        if self.prev_encoder_x is None:
+            self.prev_encoder_x = encoder_x
+            x_dist = 0.0 # No movement on the very first frame
+        else:
+            # 2. Calculate the raw change in ticks
+            delta_ticks = encoder_x - self.prev_encoder_x
+            
+            # 3. Check for wrap-around
+            # If the jump is more than half a rotation, it wrapped.
+            half_res = self.encoder_resolution / 2.0
+            
+            if delta_ticks > half_res:
+                # Wrapped backwards (e.g., 0 -> 4095). Delta is huge positive, needs to be small negative.
+                delta_ticks -= self.encoder_resolution
+            elif delta_ticks < -half_res:
+                # Wrapped forwards (e.g., 4095 -> 0). Delta is huge negative, needs to be small positive.
+                delta_ticks += self.encoder_resolution
+                
+            # 4. Convert the corrected tick delta to physical distance
+            delta_rad = (delta_ticks / self.encoder_resolution) * 2 * np.pi
+            x_dist = delta_rad * self.radius
+
+        # 5. Update previous ticks for the next loop
+        self.prev_encoder_x = encoder_x
 
         V_local = np.array([[x_dist], [0.0], [0.0]])
 
