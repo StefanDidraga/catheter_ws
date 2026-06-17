@@ -42,7 +42,7 @@ class MockCatheterNode(Node):
         
         # Tracking forward movement for circle dropping
         self.accumulated_forward_dist = 0.0
-        self.distance_threshold = 0.001 # 1 mm threshold
+        self.distance_threshold = 0.0005 # 0.5 mm threshold
 
     def fit_circle_2d(self, y1, z1, y2, z2, y3, z3):
         """ Calculate circumcenter and radius from 3 points in a 2D plane """
@@ -175,7 +175,6 @@ class MockCatheterNode(Node):
 
         # ----------------------------------------
         # Visualizing the Vessel Walls (Rings)
-        # ----------------------------------------
         wall_marker = Marker()
         wall_marker.header.frame_id = "map"
         wall_marker.header.stamp = self.get_clock().now().to_msg()
@@ -194,9 +193,7 @@ class MockCatheterNode(Node):
 
         self.publisher_.publish(wall_marker)
 
-        # ----------------------------------------
-        # Visualizing the Catheter wire (Centerline)
-        # ----------------------------------------
+      # Visualizing the Catheter wire (Centerline)
         line = Marker()
         line.header.frame_id = "map"
         line.header.stamp = self.get_clock().now().to_msg()
